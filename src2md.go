@@ -1,9 +1,6 @@
 /*
 # src2md.go
-## This is the Go programming language source code for src2md
-This is the program that I wrote that generated this actual webpage yopu are looking at right now.
-It basically extracts all comments that are in the Go source codes and puts evrything in a Markdown file.
-Indeed, the comments use Markdown for laying out the text
+Uses the Go stl "text/scanner" package
 */
 
 package main
