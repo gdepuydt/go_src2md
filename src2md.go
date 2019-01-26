@@ -1,5 +1,5 @@
 /*
-comment block 1
+F
 */
 
 package main
@@ -10,12 +10,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
 //comment1
 type Comment struct {
-	comment   string
+	text      string
 	codeStart int
 	codeEnd   int
 }
@@ -23,7 +24,7 @@ type Comment struct {
 //comment2
 func ExtractComments(content []byte) []Comment {
 
-	lineCount := 1
+	lineCount := 0
 	index := 0
 	commentStart := 0
 	commentEnd := 0
@@ -33,6 +34,7 @@ func ExtractComments(content []byte) []Comment {
 	var comments []Comment
 
 	for index < sourceLength-1 {
+
 		if content[index] == '\n' {
 			index++
 			lineCount++
@@ -47,24 +49,29 @@ func ExtractComments(content []byte) []Comment {
 			}
 			index++
 		}
+		if content[index] == '\n' {
+			index++
+			lineCount++
+		}
 		if content[index] == '/' {
 			index++
 			if content[index] == '/' {
 				index++
-				codeEnd += lineCount - 1
+				codeEnd = lineCount
 				commentStart = index
 				for content[index] != '\n' && index < sourceLength-1 {
 					index++
 				}
 				commentEnd = index
 				comments = append(comments, Comment{strings.Trim(string(content[commentStart:commentEnd]), "\n"), codeStart, codeEnd})
+
 				if content[index] == '\n' {
 					lineCount++
 				}
-				codeStart += lineCount
+				codeStart = lineCount + 1
 			} else if content[index] == '*' {
 				index++
-				codeEnd += lineCount - 1
+				codeEnd = lineCount
 				if content[index] == '\n' {
 					lineCount++
 					index++
@@ -80,18 +87,33 @@ func ExtractComments(content []byte) []Comment {
 						index++
 						if content[index] == '/' {
 							commentEnd = index - 1
-							codeStart += lineCount + 1
+
 							break
 						}
 					}
 					index++
 				}
-				comments = append(comments, Comment{string(content[commentStart:commentEnd]), codeStart, codeEnd})
+				comments = append(comments, Comment{strings.Trim(string(content[commentStart:commentEnd]), "\n"), codeStart, codeEnd})
+				//index++
+				if content[index] == '\n' {
+					lineCount++
+					index++
+				}
+				codeStart = lineCount + 3
 			}
+
 		}
 		index++
 	}
+	comments = append(comments, Comment{"", codeStart, codeEnd})
 	return comments
+}
+
+//Write comments to Markdown file
+func Write(f *os.File, text string) {
+	if _, err := f.Write([]byte(text)); err != nil {
+		log.Fatal(err)
+	}
 }
 
 /*
@@ -123,9 +145,22 @@ func main() {
 					log.Fatal(err)
 				}
 				for _, comment := range ExtractComments(content) {
-					if _, err := f.Write([]byte(comment.comment)); err != nil {
-						log.Fatal(err)
+					if len(comment.text) > 0 {
+						if comment.codeEnd > 0 {
+							Write(f, "```go\n")
+							text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStart) + ":" + strconv.Itoa(comment.codeEnd) + "}}\n\n"
+							Write(f, text)
+							Write(f, "```\n")
+						}
+						Write(f, comment.text)
+						Write(f, "\n\n")
+					} else if comment.codeEnd > 0 {
+						Write(f, "```go\n")
+						text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStart) + ":}}\n\n"
+						Write(f, text)
+						Write(f, "```\n")
 					}
+
 				}
 				if err := f.Close(); err != nil {
 					log.Fatal(err)

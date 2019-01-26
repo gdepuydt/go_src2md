@@ -1,0 +1,5 @@
+[book]
+authors = ["gdepuydt"]
+multilingual = false
+src = "src"
+title = "test"
