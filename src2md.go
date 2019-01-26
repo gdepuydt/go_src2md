@@ -1,120 +1,111 @@
 /*
 # src2md.go
-Uses the Go stl "text/scanner" package
-*/
+src2md reads source files for the [Go programming language](https://golang.org/) and turns it into [Markdown](https://en.wikipedia.org/wiki/Markdown).
 
+The program calls MDBook (written in the [Rust programming language](https://www.rust-lang.org/) to generate the website **_you are looking at now_**.
+
+## Here is the source ;-)
+
+I will need to clean it up still. I also intend to document the source code better.
+
+In fact that's the whole point of this project, document your source code in a [Literate](https://en.wikipedia.org/wiki/Literate_programming) way
+
+It's an experiment and still a work in progress. we'll see where it goes!
+*/
 package main
 
 import (
 	"fmt"
+	"go/scanner"
+	"go/token"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 )
 
 type Comment struct {
-	text      string
-	codeStart int
-	codeEnd   int
+	text          string
+	codeStartLine int
+	codeEndLine   int
+	offset        int
 }
 
-func ExtractComments(content []byte) []Comment {
+/*
+### ExtractComments
 
-	lineCount := 0
-	index := 0
-	commentStart := 0
-	commentEnd := 0
-	codeStart := 0
-	codeEnd := 0
-	sourceLength := len(content)
+//TODO: Documentation!
+*/
+
+func ExtractComments(filename string, content []byte) []Comment {
+
 	var comments []Comment
+	var s scanner.Scanner
+	// positions are relative to fset
+	// register input "file"
+	fset := token.NewFileSet()
+	file := fset.AddFile(filename, fset.Base(), len(content))
+	s.Init(file, content, nil, scanner.ScanComments)
 
-	for index < sourceLength-1 {
-
-		if content[index] == '\n' {
-			index++
-			lineCount++
+	newCodeBlock := true
+	codeStartLine := 0
+	codeEndLine := 0
+	// Repeated calls to Scan yield the token sequence found in the input.
+	for {
+		pos, tok, lit := s.Scan()
+		if tok == token.EOF {
+			break
 		}
-		if content[index] == '"' {
-			index++
-			for content[index] != '"' {
-				if content[index] == '\n' {
-					lineCount++
-				}
-				index++
+		if tok != token.COMMENT && newCodeBlock == true {
+			codeStartLine = fset.Position(pos).Line
+			newCodeBlock = false
+		}
+		if tok == token.COMMENT {
+
+			if !strings.HasPrefix(lit, "//") {
+				codeEndLine = fset.Position(pos).Line - 1
+				lit = strings.TrimSuffix(strings.TrimPrefix(lit, "/*"), "*/")
+				comments = append(comments, Comment{lit, codeStartLine, codeEndLine, fset.Position(pos).Offset})
+				newCodeBlock = true
 			}
-			index++
-		}
-		if content[index] == '\n' {
-			index++
-			lineCount++
-		}
-		if content[index] == '/' {
-			index++
-			if content[index] == '/' {
-				index++
-				codeEnd = lineCount
-				commentStart = index
-				for content[index] != '\n' && index < sourceLength-1 {
-					index++
-				}
-				commentEnd = index
-				comments = append(comments, Comment{strings.Trim(string(content[commentStart:commentEnd]), "\n"), codeStart, codeEnd})
 
-				if content[index] == '\n' {
-					lineCount++
-				}
-				codeStart = lineCount + 1
-			} else if content[index] == '*' {
-				index++
-				codeEnd = lineCount
-				if content[index] == '\n' {
-					lineCount++
-					index++
-				}
-				commentStart = index
-				for index < sourceLength-1 {
-					if content[index] == '\n' {
-						lineCount++
-						index++
-					}
+			pos, tok, lit = s.Scan()
+			for tok == token.COMMENT {
+				if !strings.HasPrefix(lit, "//") {
+					lit = strings.TrimSuffix(strings.TrimPrefix(lit, "/*"), "*/")
+					comments = append(comments, Comment{lit, 0, 0, fset.Position(pos).Offset})
 
-					if content[index] == '*' {
-						index++
-						if content[index] == '/' {
-							commentEnd = index - 1
-
-							break
-						}
-					}
-					index++
 				}
-				comments = append(comments, Comment{strings.Trim(string(content[commentStart:commentEnd]), "\n"), codeStart, codeEnd})
-				if content[index] == '\n' {
-					lineCount++
-					index++
-				}
-				codeStart = lineCount + 3
+				pos, tok, lit = s.Scan()
 			}
 
 		}
-		index++
 	}
-	comments = append(comments, Comment{"", codeStart, codeEnd})
+	comments = append(comments, Comment{"", codeStartLine, 0, 0})
 	return comments
 }
 
-//Write text to Markdown file
+/*
+### Write text to Markdown file
+*/
+
 func Write(f *os.File, text string) {
 	if _, err := f.Write([]byte(text)); err != nil {
 		log.Fatal(err)
 	}
 }
 
-//Create a new file, removing the file thatalready exists. all text will be appended upon writing.
+/*
+### Create a new file, removing the file thatalready exists. all text will be appended upon writing.
+// TODO: I think I need to look into makingsure the open files are closed properly!
+
+also ... It woud be cool if TODOs are colored red for the webpage...
+
+*/
+
 func createFile(fileName string) *os.File {
 	err := os.Remove(fileName)
 	if err != nil {
@@ -130,8 +121,11 @@ func createFile(fileName string) *os.File {
 	return f
 }
 
-/*src2md function
- */
+/*
+### src2md function
+
+The actual generation of the Markdown file happens here
+*/
 
 func src2md() {
 	files, err := ioutil.ReadDir(".")
@@ -157,19 +151,21 @@ func src2md() {
 				Write(summary, "- ["+strings.Replace(file.Name(), ".go", "", 1)+"](./"+strings.Replace(file.Name(), ".go", ".md", 1)+")")
 				if len(content) > 0 {
 					mdfile := createFile(strings.Replace(file.Name(), ".go", ".md", 1))
-					for _, comment := range ExtractComments(content) {
-						if len(comment.text) > 0 {
-							if comment.codeEnd > 0 {
-								Write(mdfile, "```go\n")
-								text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStart) + ":" + strconv.Itoa(comment.codeEnd) + "}}\n\n"
-								Write(mdfile, text)
-								Write(mdfile, "```\n")
-							}
+					//loop over all found comments
+					for _, comment := range ExtractComments(mdfile.Name(), content) {
+						if comment.codeEndLine != 0 {
+							Write(mdfile, "```go\n")
+							text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStartLine) + ":" + strconv.Itoa(comment.codeEndLine) + "}}\n\n"
+							Write(mdfile, text)
+							Write(mdfile, "```\n")
+						}
+						if len(comment.text) > 1 {
 							Write(mdfile, comment.text)
 							Write(mdfile, "\n\n")
-						} else if comment.codeEnd > 0 {
+						}
+						if comment.codeStartLine > comment.codeEndLine {
 							Write(mdfile, "```go\n")
-							text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStart) + ":}}\n\n"
+							text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStartLine) + ":}}\n\n"
 							Write(mdfile, text)
 							Write(mdfile, "```\n")
 						}
@@ -182,18 +178,28 @@ func src2md() {
 				}
 			}
 		}
-
 	}
-
-}
-
-//MDBookBuild builds this actual webpage you are vieuwing right now
-func MDBookBuild() {
-	// TODO!!
 }
 
 /*
-## start of the main function
+### MDBookBuild builds this actual webpage you are viewing right now
+*/
+
+func MDBookBuild() {
+	os.Chdir("../")
+	cmd := exec.Command("mdbook", "build", "-o")
+	cmd.Run()
+}
+
+/*
+# start of the main function
+
+Keep then main simple [KISS](https://nl.wikipedia.org/wiki/KISS-principe)
+
+It would be better to put the main function at the top of the page.
+
+Also would't it be nice if the function calls are hyperlinks to each other... definitely on the TODO!!
+
 */
 
 func main() {

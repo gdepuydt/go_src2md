@@ -1,53 +1,82 @@
+
 # src2md.go
-## This is the Go programming language source code for src2md
-This is the program that I wrote that generated this actual webpage yopu are looking at right now.
-It basically extracts all comments that are in the Go source codes and puts evrything in a Markdown file.
-Indeed, the comments use Markdown for laying out the text
+src2md reads source files for the [Go programming language](https://golang.org/) and turns it into [Markdown](https://en.wikipedia.org/wiki/Markdown).
+
+The program calls MDBook (written in the [Rust programming language](https://www.rust-lang.org/) to generate the website **_you are looking at now_**.
+
+## Here is the source ;-)
+
+I will need to clean it up still. I also intend to document the source code better.
+
+In fact that's the whole point of this project, document your source code in a [Literate](https://en.wikipedia.org/wiki/Literate_programming) way
+
+It's an experiment and still a work in progress. we'll see where it goes!
+
 
 ```go
-{{#include ../../src2md.go:9:112}}
+{{#include ../../src2md.go:15:36}}
 
 ```
-Write text to Markdown file
+
+### ExtractComments
+
+//TODO: Documentation!
+
 
 ```go
-{{#include ../../src2md.go:114:119}}
+{{#include ../../src2md.go:43:90}}
 
 ```
-Create a new file, removing the file thatalready exists. all text will be appended upon writing.
+
+### Write text to Markdown file
+
 
 ```go
-{{#include ../../src2md.go:121:130}}
+{{#include ../../src2md.go:95:100}}
 
 ```
- TODO: do the defer destructor function here to correctly close the opened file
+
+### Create a new file, removing the file thatalready exists. all text will be appended upon writing.
+// TODO: I think I need to look into makingsure the open files are closed properly!
+
+also ... It woud be cool if TODOs are colored red for the webpage...
+
+
 
 ```go
-{{#include ../../src2md.go:132:135}}
+{{#include ../../src2md.go:109:123}}
 
 ```
-src2md function
- 
+
+### src2md function
+
+The actual generation of the Markdown file happens here
+
 
 ```go
-{{#include ../../src2md.go:139:192}}
+{{#include ../../src2md.go:130:183}}
 
 ```
-MDBookBuild builds this actual webpage you are vieuwing right now
+
+### MDBookBuild builds this actual webpage you are viewing right now
+
 
 ```go
-{{#include ../../src2md.go:194:194}}
+{{#include ../../src2md.go:188:193}}
 
 ```
- TODO!!
+
+# start of the main function
+
+Keep then main simple [KISS](https://nl.wikipedia.org/wiki/KISS-principe)
+
+It would be better to put the main function at the top of the page.
+
+Also would't it be nice if the function calls are hyperlinks to each other... definitely on the TODO!!
+
+
 
 ```go
-{{#include ../../src2md.go:196:197}}
-
-```
-## start of the main function
-
-```go
-{{#include ../../src2md.go:202:}}
+{{#include ../../src2md.go:205:}}
 
 ```
