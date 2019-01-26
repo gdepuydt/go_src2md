@@ -1,5 +1,9 @@
 /*
-F
+# src2md.go
+## This is the Go programming language source code for src2md
+This is the program that I wrote that generated this actual webpage yopu are looking at right now.
+It basically extracts all comments that are in the Go source codes and puts evrything in a Markdown file.
+Indeed, the comments use Markdown for laying out the text
 */
 
 package main
@@ -14,14 +18,12 @@ import (
 	"strings"
 )
 
-//comment1
 type Comment struct {
 	text      string
 	codeStart int
 	codeEnd   int
 }
 
-//comment2
 func ExtractComments(content []byte) []Comment {
 
 	lineCount := 0
@@ -94,7 +96,6 @@ func ExtractComments(content []byte) []Comment {
 					index++
 				}
 				comments = append(comments, Comment{strings.Trim(string(content[commentStart:commentEnd]), "\n"), codeStart, codeEnd})
-				//index++
 				if content[index] == '\n' {
 					lineCount++
 					index++
@@ -109,64 +110,97 @@ func ExtractComments(content []byte) []Comment {
 	return comments
 }
 
-//Write comments to Markdown file
+//Write text to Markdown file
 func Write(f *os.File, text string) {
 	if _, err := f.Write([]byte(text)); err != nil {
 		log.Fatal(err)
 	}
 }
 
-/*
-main function
-*/
-
-func main() {
-	files, err := ioutil.ReadDir(".")
+//Create a new file, removing the file thatalready exists. all text will be appended upon writing.
+func createFile(fileName string) *os.File {
+	err := os.Remove(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, file := range files {
-		if pf := filepath.Ext(file.Name()); pf == ".go" {
-			fmt.Println("processing file...", file.Name())
-			content, err := ioutil.ReadFile(file.Name())
-			if err != nil {
-				log.Fatal(err)
-			}
+	// TODO: do the defer destructor function here to correctly close the opened file
 
-			if len(content) > 0 && os.MkdirAll("./mdbook/src/", os.ModeDir) == nil {
-				err := os.Chdir("./mdbook/src/")
-				err = os.Remove(strings.Replace(file.Name(), ".go", ".md", 1))
+	return f
+}
+
+/*src2md function
+ */
+
+func src2md() {
+	files, err := ioutil.ReadDir(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if len(files) > 0 {
+
+		for _, file := range files {
+			if pf := filepath.Ext(file.Name()); pf == ".go" {
+				fmt.Println("processing file...", file.Name())
+				content, err := ioutil.ReadFile(file.Name())
 				if err != nil {
 					log.Fatal(err)
 				}
-				f, err := os.OpenFile(strings.Replace(file.Name(), ".go", ".md", 1), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+				err = os.MkdirAll("./mdbook/src/", os.ModeDir)
 				if err != nil {
 					log.Fatal(err)
 				}
-				for _, comment := range ExtractComments(content) {
-					if len(comment.text) > 0 {
-						if comment.codeEnd > 0 {
-							Write(f, "```go\n")
-							text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStart) + ":" + strconv.Itoa(comment.codeEnd) + "}}\n\n"
-							Write(f, text)
-							Write(f, "```\n")
+				err = os.Chdir("./mdbook/src/")
+				summary := createFile("SUMMARY.md")
+				Write(summary, "# "+file.Name()+"\n\n")
+				Write(summary, "- ["+strings.Replace(file.Name(), ".go", "", 1)+"](./"+strings.Replace(file.Name(), ".go", ".md", 1)+")")
+				if len(content) > 0 {
+					mdfile := createFile(strings.Replace(file.Name(), ".go", ".md", 1))
+					for _, comment := range ExtractComments(content) {
+						if len(comment.text) > 0 {
+							if comment.codeEnd > 0 {
+								Write(mdfile, "```go\n")
+								text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStart) + ":" + strconv.Itoa(comment.codeEnd) + "}}\n\n"
+								Write(mdfile, text)
+								Write(mdfile, "```\n")
+							}
+							Write(mdfile, comment.text)
+							Write(mdfile, "\n\n")
+						} else if comment.codeEnd > 0 {
+							Write(mdfile, "```go\n")
+							text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStart) + ":}}\n\n"
+							Write(mdfile, text)
+							Write(mdfile, "```\n")
 						}
-						Write(f, comment.text)
-						Write(f, "\n\n")
-					} else if comment.codeEnd > 0 {
-						Write(f, "```go\n")
-						text := "{{#include ../../" + file.Name() + ":" + strconv.Itoa(comment.codeStart) + ":}}\n\n"
-						Write(f, text)
-						Write(f, "```\n")
+
+					}
+					if err := mdfile.Close(); err != nil {
+						log.Fatal(err)
 					}
 
 				}
-				if err := f.Close(); err != nil {
-					log.Fatal(err)
-				}
-
 			}
 		}
+
 	}
+
+}
+
+//MDBookBuild builds this actual webpage you are vieuwing right now
+func MDBookBuild() {
+	// TODO!!
+}
+
+/*
+## start of the main function
+*/
+
+func main() {
+	src2md()
+	MDBookBuild()
+
 }
