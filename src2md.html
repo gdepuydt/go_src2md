@@ -1,0 +1,378 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>src2md - test</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="src2md.html" class="active"><strong aria-hidden="true">1.</strong> src2md</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">test</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#src2mdgo" id="src2mdgo"><h1>src2md.go</h1></a>
+<p><a href="https://github.com/gdepuydt/go_src2md">src2md</a> reads source files for the <a href="https://golang.org/">Go programming language</a> and turns it into <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a>.</p>
+<p>The program calls MDBook (written in the <a href="https://www.rust-lang.org/">Rust programming language</a> to generate the website <strong><em>you are looking at now</em></strong>.</p>
+<p>You can checkout the <a href="https://github.com/gdepuydt/go_src2md">Github repository</a> for this project</p>
+<a class="header" href="#here-is-the-source--" id="here-is-the-source--"><h2>Here is the source ;-)</h2></a>
+<p>I will need to clean it up still. I also intend to document the source code better.</p>
+<p>In fact that's the whole point of this project, document your source code in a <a href="https://en.wikipedia.org/wiki/Literate_programming">Literate</a> way</p>
+<p>It's an experiment and still a work in progress. we'll see where it goes!</p>
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;go/scanner&quot;
+    &quot;go/token&quot;
+    &quot;io/ioutil&quot;
+    &quot;log&quot;
+    &quot;os&quot;
+    &quot;os/exec&quot;
+    &quot;path/filepath&quot;
+    &quot;strconv&quot;
+    &quot;strings&quot;
+)
+
+type Comment struct {
+    text          string
+    codeStartLine int
+    codeEndLine   int
+    offset        int
+}
+
+
+</code></pre>
+<a class="header" href="#extractcomments" id="extractcomments"><h3>ExtractComments</h3></a>
+<p>//TODO: Documentation!</p>
+<pre><code class="language-go">func ExtractComments(filename string, content []byte) []Comment {
+
+    var comments []Comment
+    var s scanner.Scanner
+    // positions are relative to fset
+    // register input &quot;file&quot;
+    fset := token.NewFileSet()
+    file := fset.AddFile(filename, fset.Base(), len(content))
+    s.Init(file, content, nil, scanner.ScanComments)
+
+    newCodeBlock := true
+    codeStartLine := 0
+    codeEndLine := 0
+    // Repeated calls to Scan yield the token sequence found in the input.
+    for {
+        pos, tok, lit := s.Scan()
+        if tok == token.EOF {
+            break
+        }
+        if tok != token.COMMENT &amp;&amp; newCodeBlock == true {
+            codeStartLine = fset.Position(pos).Line
+            newCodeBlock = false
+        }
+        if tok == token.COMMENT {
+
+            if !strings.HasPrefix(lit, &quot;//&quot;) {
+                codeEndLine = fset.Position(pos).Line - 1
+                lit = strings.TrimSuffix(strings.TrimPrefix(lit, &quot;/*&quot;), &quot;*/&quot;)
+                comments = append(comments, Comment{lit, codeStartLine, codeEndLine, fset.Position(pos).Offset})
+                newCodeBlock = true
+            }
+
+            pos, tok, lit = s.Scan()
+            for tok == token.COMMENT {
+                if !strings.HasPrefix(lit, &quot;//&quot;) {
+                    lit = strings.TrimSuffix(strings.TrimPrefix(lit, &quot;/*&quot;), &quot;*/&quot;)
+                    comments = append(comments, Comment{lit, 0, 0, fset.Position(pos).Offset})
+
+                }
+                pos, tok, lit = s.Scan()
+            }
+
+        }
+    }
+    comments = append(comments, Comment{&quot;&quot;, codeStartLine, 0, 0})
+    return comments
+}
+
+
+</code></pre>
+<a class="header" href="#write-text-to-markdown-file" id="write-text-to-markdown-file"><h3>Write text to Markdown file</h3></a>
+<pre><code class="language-go">func Write(f *os.File, text string) {
+    if _, err := f.Write([]byte(text)); err != nil {
+        log.Fatal(err)
+    }
+}
+
+
+</code></pre>
+<a class="header" href="#create-a-new-file-removing-the-file-thatalready-exists-all-text-will-be-appended-upon-writing" id="create-a-new-file-removing-the-file-thatalready-exists-all-text-will-be-appended-upon-writing"><h3>Create a new file, removing the file thatalready exists. all text will be appended upon writing.</h3></a>
+<p>// TODO: I think I need to look into makingsure the open files are closed properly!</p>
+<p>also ... It woud be cool if TODOs are colored red for the webpage...</p>
+<pre><code class="language-go">func createFile(fileName string) *os.File {
+    err := os.Remove(fileName)
+    if err != nil {
+        log.Fatal(err)
+    }
+    f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // TODO: do the defer destructor function here to correctly close the opened file
+
+    return f
+}
+
+
+</code></pre>
+<a class="header" href="#src2md-function" id="src2md-function"><h3>src2md function</h3></a>
+<p>The actual generation of the Markdown file happens here</p>
+<pre><code class="language-go">func src2md() {
+    files, err := ioutil.ReadDir(&quot;.&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+    if len(files) &gt; 0 {
+
+        for _, file := range files {
+            if pf := filepath.Ext(file.Name()); pf == &quot;.go&quot; {
+                fmt.Println(&quot;processing file...&quot;, file.Name())
+                content, err := ioutil.ReadFile(file.Name())
+                if err != nil {
+                    log.Fatal(err)
+                }
+                err = os.MkdirAll(&quot;./mdbook/src/&quot;, os.ModeDir)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                err = os.Chdir(&quot;./mdbook/src/&quot;)
+                summary := createFile(&quot;SUMMARY.md&quot;)
+                Write(summary, &quot;# &quot;+file.Name()+&quot;\n\n&quot;)
+                Write(summary, &quot;- [&quot;+strings.Replace(file.Name(), &quot;.go&quot;, &quot;&quot;, 1)+&quot;](./&quot;+strings.Replace(file.Name(), &quot;.go&quot;, &quot;.md&quot;, 1)+&quot;)&quot;)
+                if len(content) &gt; 0 {
+                    mdfile := createFile(strings.Replace(file.Name(), &quot;.go&quot;, &quot;.md&quot;, 1))
+                    //loop over all found comments
+                    for _, comment := range ExtractComments(mdfile.Name(), content) {
+                        if comment.codeEndLine != 0 {
+                            Write(mdfile, &quot;```go\n&quot;)
+                            text := &quot;{{#include ../../&quot; + file.Name() + &quot;:&quot; + strconv.Itoa(comment.codeStartLine) + &quot;:&quot; + strconv.Itoa(comment.codeEndLine) + &quot;}}\n\n&quot;
+                            Write(mdfile, text)
+                            Write(mdfile, &quot;```\n&quot;)
+                        }
+                        if len(comment.text) &gt; 1 {
+                            Write(mdfile, comment.text)
+                            Write(mdfile, &quot;\n\n&quot;)
+                        }
+                        if comment.codeStartLine &gt; comment.codeEndLine {
+                            Write(mdfile, &quot;```go\n&quot;)
+                            text := &quot;{{#include ../../&quot; + file.Name() + &quot;:&quot; + strconv.Itoa(comment.codeStartLine) + &quot;:}}\n\n&quot;
+                            Write(mdfile, text)
+                            Write(mdfile, &quot;```\n&quot;)
+                        }
+
+                    }
+                    if err := mdfile.Close(); err != nil {
+                        log.Fatal(err)
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+
+</code></pre>
+<a class="header" href="#mdbookbuild-builds-this-actual-webpage-you-are-viewing-right-now" id="mdbookbuild-builds-this-actual-webpage-you-are-viewing-right-now"><h3>MDBookBuild builds this actual webpage you are viewing right now</h3></a>
+<pre><code class="language-go">func MDBookBuild() {
+    os.Chdir(&quot;../&quot;)
+    cmd := exec.Command(&quot;mdbook&quot;, &quot;build&quot;, &quot;-o&quot;)
+    cmd.Run()
+}
+
+
+</code></pre>
+<a class="header" href="#start-of-the-main-function" id="start-of-the-main-function"><h1>start of the main function</h1></a>
+<p>Keep then main simple <a href="https://nl.wikipedia.org/wiki/KISS-principe">KISS</a></p>
+<p>It would be better to put the main function at the top of the page.</p>
+<p>Also would't it be nice if the function calls are hyperlinks to each other... definitely on the TODO!!</p>
+<pre><code class="language-go">func main() {
+    src2md()
+    MDBookBuild()
+
+}
+
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
