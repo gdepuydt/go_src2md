@@ -1,8 +1,10 @@
 
 # src2md.go
-src2md reads source files for the [Go programming language](https://golang.org/) and turns it into [Markdown](https://en.wikipedia.org/wiki/Markdown).
+[src2md](https://github.com/gdepuydt/go_src2md) reads source files for the [Go programming language](https://golang.org/) and turns it into [Markdown](https://en.wikipedia.org/wiki/Markdown).
 
 The program calls MDBook (written in the [Rust programming language](https://www.rust-lang.org/) to generate the website **_you are looking at now_**.
+
+You can checkout the [Github repository](https://github.com/gdepuydt/go_src2md) for this project
 
 ## Here is the source ;-)
 
@@ -14,7 +16,7 @@ It's an experiment and still a work in progress. we'll see where it goes!
 
 
 ```go
-{{#include ../../src2md.go:15:36}}
+{{#include ../../src2md.go:17:38}}
 
 ```
 
@@ -24,7 +26,7 @@ It's an experiment and still a work in progress. we'll see where it goes!
 
 
 ```go
-{{#include ../../src2md.go:43:90}}
+{{#include ../../src2md.go:45:92}}
 
 ```
 
@@ -32,7 +34,7 @@ It's an experiment and still a work in progress. we'll see where it goes!
 
 
 ```go
-{{#include ../../src2md.go:95:100}}
+{{#include ../../src2md.go:97:102}}
 
 ```
 
@@ -44,7 +46,7 @@ also ... It woud be cool if TODOs are colored red for the webpage...
 
 
 ```go
-{{#include ../../src2md.go:109:123}}
+{{#include ../../src2md.go:111:125}}
 
 ```
 
@@ -54,7 +56,7 @@ The actual generation of the Markdown file happens here
 
 
 ```go
-{{#include ../../src2md.go:130:183}}
+{{#include ../../src2md.go:132:185}}
 
 ```
 
@@ -62,7 +64,7 @@ The actual generation of the Markdown file happens here
 
 
 ```go
-{{#include ../../src2md.go:188:193}}
+{{#include ../../src2md.go:190:195}}
 
 ```
 
@@ -77,6 +79,6 @@ Also would't it be nice if the function calls are hyperlinks to each other... de
 
 
 ```go
-{{#include ../../src2md.go:205:}}
+{{#include ../../src2md.go:207:}}
 
 ```

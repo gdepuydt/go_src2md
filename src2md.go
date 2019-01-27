@@ -1,8 +1,10 @@
 /*
 # src2md.go
-src2md reads source files for the [Go programming language](https://golang.org/) and turns it into [Markdown](https://en.wikipedia.org/wiki/Markdown).
+[src2md](https://github.com/gdepuydt/go_src2md) reads source files for the [Go programming language](https://golang.org/) and turns it into [Markdown](https://en.wikipedia.org/wiki/Markdown).
 
 The program calls MDBook (written in the [Rust programming language](https://www.rust-lang.org/) to generate the website **_you are looking at now_**.
+
+You can checkout the [Github repository](https://github.com/gdepuydt/go_src2md) for this project
 
 ## Here is the source ;-)
 
